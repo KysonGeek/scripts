@@ -72,8 +72,8 @@ list_instances() {
 
 case "$1" in
   install) install_binary ;;
-  create) create_config "$2" ;;
-  start) start_instance "$2" ;;
+  create) create_config "$2"
+          start_instance "$2" ;;
   stop) stop_instance "$2" ;;
   list) list_instances ;;
   *) echo "用法: $0 {install|create <port>|start <port>|stop <port>|list}" ;;
