@@ -1,26 +1,31 @@
 let url = $request.url;
-let videoId = url.split('?')[0];
-let range = $request.headers["Range"] || $request.headers["range"];
+let headers = $request.headers;
+let range = headers["Range"] || headers["range"] || "";
 
-// 如果不是第一轮请求，且我们缓存里已经有这个视频的直链了
-if (range && range !== "bytes=0-") {
-    let savedLocation = $prefs.valueForKey(videoId);
+// 提取视频 ID (例如 4464) 作为缓存键
+let videoIdMatch = url.match(/\/videos\/(\d+)\/stream/);
+let videoKey = videoIdMatch ? videoIdMatch[1] : null;
+
+// 逻辑：如果 Range 不是 0- 且缓存中有直链，则直接 302
+if (videoKey && range && range !== "bytes=0-") {
+    let savedLocation = $prefs.valueForKey("emby_115_" + videoKey);
     
     if (savedLocation) {
-        console.log("触发后续重定向，Range: " + range);
+        console.log(`[Emby优化] 命中缓存，ID: ${videoKey}, Range: ${range}, 转发至直链`);
         $done({
             status: "HTTP/1.1 302 Found",
             headers: {
                 "Location": savedLocation,
-                "Access-Control-Allow-Origin": "*"
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache"
             },
             body: ""
         });
     } else {
-        // 如果缓存没命中，放行让它去 VPS 拿（预防万一）
+        console.log(`[Emby优化] 未命中缓存，放行由VPS处理`);
         $done({});
     }
 } else {
-    // Range 为 0- 的第一轮请求，放行去 VPS 握手
+    // 第一轮 0- 或者无 Range 请求，直接放行给 VPS
     $done({});
 }
