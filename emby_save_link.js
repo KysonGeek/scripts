@@ -1,13 +1,20 @@
-// 获取当前请求的 Range
-let range = $request.headers["Range"] || $request.headers["range"];
+let url = $request.url;
+let headers = $request.headers;
+let respHeaders = $response.headers;
 let status = $response.status;
-let location = $response.headers["Location"] || $response.headers["location"];
 
-// 只有当是第一轮请求且 VPS 返回了 302 重定向时才记录
-if (range === "bytes=0-" && (status == 302 || status == 301) && location) {
-    // 将该视频 ID 对应的直链存入缓存 (以 URL 路径作为唯一标识)
-    let videoId = $request.url.split('?')[0]; 
-    $prefs.setValueForKey(location, videoId);
-    console.log("已存储 115 直链: " + location);
+// 获取请求时的 Range
+let range = headers["Range"] || headers["range"] || "";
+// 获取响应中的 Location (115 直链)
+let location = respHeaders["Location"] || respHeaders["location"];
+
+let videoIdMatch = url.match(/\/videos\/(\d+)\/stream/);
+let videoKey = videoIdMatch ? videoIdMatch[1] : null;
+
+// 只有在 Range 是 0- 且 VPS 成功返回 302 时才记录
+if (videoKey && range === "bytes=0-" && (status == 302 || status == 301) && location) {
+    $prefs.setValueForKey(location, "emby_115_" + videoKey);
+    console.log(`[Emby优化] 成功捕获直链 ID: ${videoKey}, Location: ${location}`);
 }
+
 $done({});
