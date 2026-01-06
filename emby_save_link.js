@@ -12,7 +12,7 @@ let videoIdMatch = url.match(/\/videos\/(\d+)\/stream/);
 let videoKey = videoIdMatch ? videoIdMatch[1] : null;
 
 // 只有在 Range 是 0- 且 VPS 成功返回 302 时才记录
-if (videoKey && range === "bytes=0-" && (status == 302 || status == 301) && location) {
+if (videoKey && range === "bytes=0-" && (status == 307) && location) {
     $prefs.setValueForKey(location, "emby_115_" + videoKey);
     console.log(`[Emby优化] 成功捕获直链 ID: ${videoKey}, Location: ${location}`);
 }
