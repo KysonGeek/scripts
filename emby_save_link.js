@@ -1,7 +1,7 @@
 let url = $request.url;
 let headers = $request.headers;
 let respHeaders = $response.headers;
-let status = $response.statusCode;
+let status = $response.statusCode || $response.status;
 
 // 获取请求时的 Range
 let range = headers["Range"] || headers["range"] || "";
