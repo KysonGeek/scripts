@@ -8,9 +8,7 @@ let videoKey = videoIdMatch ? videoIdMatch[1] : null;
 
 // 逻辑：如果 Range 不是 0- 且缓存中有直链，则直接 302
 if (videoKey && range && range !== "bytes=0-") {
-    console.log(`query start`)
     let savedLocation = $prefs.valueForKey("emby_115_" + videoKey);
-    console.log(`query end`)
     if (savedLocation) {
         console.log(`[Emby优化] 命中缓存，ID: ${videoKey}, Range: ${range}, 转发至直链`);
         $done({
