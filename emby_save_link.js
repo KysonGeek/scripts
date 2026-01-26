@@ -9,6 +9,7 @@ let range = headers["Range"] || headers["range"] || "";
 let location = respHeaders["Location"] || respHeaders["location"];
 
 let videoIdMatch = url.match(/d\/(\w+)/);
+console.log(`[Emby优化] url: ${url}, videoId: ${videoIdMatch}`);
 let videoKey = videoIdMatch ? videoIdMatch[1] : null;
 
 // 只有在 Range 是 0- 且 VPS 成功返回 307 时才记录
