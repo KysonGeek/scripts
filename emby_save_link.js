@@ -8,7 +8,7 @@ let range = headers["Range"] || headers["range"] || "";
 // 获取响应中的 Location (115 直链)
 let location = respHeaders["Location"] || respHeaders["location"];
 
-let videoIdMatch = url.match(/\/d\/(\w+));
+let videoIdMatch = url.match(/\/d\/(\w+)/);
 let videoKey = videoIdMatch ? videoIdMatch[1] : null;
 
 // 只有在 Range 是 0- 且 VPS 成功返回 307 时才记录
