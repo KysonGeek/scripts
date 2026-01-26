@@ -3,7 +3,7 @@ let headers = $request.headers;
 let range = headers["Range"] || headers["range"] || "";
 
 // 提取视频 ID (例如 4464) 作为缓存键
-let videoIdMatch = url.match(/\/d\/(\w+));
+let videoIdMatch = url.match(/\/d\/(\w+)/);
 let videoKey = videoIdMatch ? videoIdMatch[1] : null;
 
 // 逻辑：如果 Range 不是 0- 且缓存中有直链，则直接 302
