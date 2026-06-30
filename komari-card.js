@@ -12,7 +12,7 @@ const CONFIG = {
   apiKey: "", // 可选
   offlineThreshold: 120,
   pingHours: 1,
-  netHours: 6, // 网络折线图时间窗（小时）
+  netHours: 1, // 网络折线图时间窗（小时）
 };
 CONFIG.baseURL = CONFIG.baseURL.replace(/\/+$/, "");
 const SELECTOR = (args.widgetParameter || "").trim();
@@ -43,7 +43,7 @@ async function fetchJSON(path) {
 async function loadNodes() {
   const res = await fetchJSON("/api/nodes");
   const nodes = (res && res.data) || [];
-  nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0));
+  nodes.sort((a, b) => (a.weight || 0) - (b.weight || 0));
   return nodes;
 }
 async function loadRecentArr(uuid) {
