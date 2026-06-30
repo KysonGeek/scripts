@@ -10,7 +10,7 @@
 const CONFIG = {
   baseURL: "https://komari.example.com", // 必填，结尾不带斜杠
   apiKey: "", // 可选
-  offlineThreshold: 120,
+  offlineThreshold: 300,
   pingHours: 1,
   netHours: 1, // 网络折线图时间窗（小时）
 };
@@ -117,6 +117,12 @@ function fu(s) {
   const d = Math.floor(s / 86400);
   if (d > 0) return d + "d";
   return Math.floor(s / 3600) + "h";
+}
+// 数据刷新时刻 HH:MM
+function hhmm() {
+  const t = new Date();
+  const p = (n) => (n < 10 ? "0" : "") + n;
+  return p(t.getHours()) + ":" + p(t.getMinutes());
 }
 function pc(u, t) {
   return t > 0 ? (u / t) * 100 : 0;
@@ -315,9 +321,18 @@ function buildCard(d, fam) {
   nm.lineLimit = 1;
   if (!small) {
     head.addSpacer();
-    const right = head.addText(d.online ? fu(d.uptime) : "offline");
-    right.font = Font.systemFont(11);
-    right.textColor = COL.dim;
+    // 右上角：uptime + 数据刷新时间
+    const rstack = head.addStack();
+    rstack.layoutVertically();
+    rstack.spacing = 1;
+    const up = rstack.addText(d.online ? fu(d.uptime) : "offline");
+    up.font = Font.systemFont(11);
+    up.textColor = COL.dim;
+    up.rightAlignText();
+    const rt = rstack.addText("⟳ " + hhmm());
+    rt.font = Font.systemFont(9);
+    rt.textColor = COL.dim2;
+    rt.rightAlignText();
   }
 
   // 副标题：仅 large 显示系统 + 到期
